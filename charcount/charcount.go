@@ -23,8 +23,7 @@ func main() {
 
 	// Loop over the string and count the values
 	for _, r := range str {
-		_, ok := count[r]
-		if ok {
+		if _, ok := count[r]; ok {
 			count[r]++
 		}
 	}
