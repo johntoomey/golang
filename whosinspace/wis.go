@@ -3,7 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -27,21 +29,23 @@ func main() {
 		Timeout: time.Second * 2,
 	}
 
-	resp, _ := client.Get(url)
-
-	if resp.StatusCode != http.StatusOK {
+	resp, err := client.Get(url)
+	if err != nil || resp.StatusCode != http.StatusOK {
 		resp.Body.Close()
+		log.Println(err)
+		os.Exit(1)
 	}
 
 	var wis WhosInSpace
 
 	if err := json.NewDecoder(resp.Body).Decode(&wis); err != nil {
 		resp.Body.Close()
+		log.Println(err)
+		os.Exit(1)
 	}
 
-	fmt.Printf("people in space %d\n", wis.Number)
+	fmt.Printf("number of people in space %d\n", wis.Number)
 	for _, p := range wis.People {
-		fmt.Println(p.Name)
+		fmt.Println(p.Craft, p.Name)
 	}
-
 }
